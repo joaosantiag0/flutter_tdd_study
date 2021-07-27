@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:dev_tools/domain/helpers/helpers.dart';
 import 'package:dev_tools/domain/usecases/usecases.dart';
 
 import 'package:dev_tools/data/http/http.dart';
@@ -23,14 +24,34 @@ void main() {
   });
 
   test("Should call httpclient with correct values", () async {
-    when(() => httpClient.request(
-        url: any(named: "url"),
-        method: any(named: "method"))).thenAnswer((_) async => {"test": "a"});
+    mockHttpClientRequestWhen(httpClient)
+        .thenAnswer((_) async => {"test": "a"});
 
     await usecase.getListMenuItems();
 
     verify(() => httpClient.request(url: url, method: "GET")).called(1);
   });
+
+  test("Should throw UnexpectedError if HttpClient returns 404", () async {
+    mockHttpClientRequestWhen(httpClient).thenThrow(HttpError.notFound);
+
+    final future = usecase.getListMenuItems();
+
+    expect(future, throwsA(DomainError.unexpectedError));
+  });
+
+  test("Should throw UnexpectedError if HttpClient returns 403", () async {
+    mockHttpClientRequestWhen(httpClient).thenThrow(HttpError.forbiden);
+
+    final future = usecase.getListMenuItems();
+
+    expect(future, throwsA(DomainError.unexpectedError));
+  });
+}
+
+When<Future<dynamic>> mockHttpClientRequestWhen(HttpClient httpClient) {
+  return when(() =>
+      httpClient.request(url: any(named: "url"), method: any(named: "method")));
 }
 
 class MockHttpClientImplementation extends Mock implements HttpClient {}
