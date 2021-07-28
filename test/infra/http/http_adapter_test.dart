@@ -13,16 +13,19 @@ void main() {
 
   late String url;
 
+  void mockValidResponse() {
+    when(() => client.get(Uri.parse(url))).thenAnswer(
+        (_) async => Response("{ \"test_key\": \"test_value\" }", 200));
+  }
+
   setUp(() {
     client = ClientMock();
     httpClient = HttpClientImplementation(client);
     url = faker.internet.httpUrl();
+    mockValidResponse();
   });
 
   test("Should HttpClient call URL with verb Get without headers", () async {
-    when(() => client.get(Uri.parse(url))).thenAnswer(
-        (_) async => Response("{ \"test_key\": \"test_value\" }", 200));
-
     httpClient.request(url: url, method: "GET");
 
     verify(() => client.get(Uri.parse(url))).called(1);
