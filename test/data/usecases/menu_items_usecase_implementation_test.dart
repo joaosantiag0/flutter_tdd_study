@@ -13,17 +13,14 @@ import 'package:dev_tools/data/usecases/usecases.dart';
 import '../../mocks/api_content_response_mock.dart';
 
 void main() {
-  late Faker faker;
-
   late MenuItemsUsecase usecase;
   late HttpClient httpClient;
 
   late String url;
 
   setUp(() {
-    faker = Faker();
     url = faker.internet.httpsUrl();
-    httpClient = MockHttpClientImplementation();
+    httpClient = MockHttpClient();
     usecase = MenuItemsUsecaseImplementation(httpClient: httpClient, url: url);
     mockSuccessfulResponse(httpClient);
   });
@@ -68,4 +65,4 @@ void mockSuccessfulResponse(HttpClient httpClient) {
       jsonDecode(ApiContentResponseMock.listContentJsonResponseMock));
 }
 
-class MockHttpClientImplementation extends Mock implements HttpClient {}
+class MockHttpClient extends Mock implements HttpClient {}
