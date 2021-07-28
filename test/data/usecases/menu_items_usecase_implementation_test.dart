@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -7,6 +9,8 @@ import 'package:dev_tools/domain/usecases/usecases.dart';
 
 import 'package:dev_tools/data/http/http.dart';
 import 'package:dev_tools/data/usecases/usecases.dart';
+
+import '../../mocks/api_content_response_mock.dart';
 
 void main() {
   late Faker faker;
@@ -46,6 +50,17 @@ void main() {
     final future = usecase.getListMenuItems();
 
     expect(future, throwsA(DomainError.unexpectedError));
+  });
+
+  test("Should return a list of MenuItemsUsecase if request is successful",
+      () async {
+    final test = jsonDecode(ApiContentResponseMock.listContentJsonResponseMock);
+    mockHttpClientRequestWhen(httpClient).thenAnswer((_) async =>
+        jsonDecode(ApiContentResponseMock.listContentJsonResponseMock));
+
+    final result = await usecase.getListMenuItems();
+
+    expect(result, ApiContentResponseMock.responseConvertedToEntityMock());
   });
 }
 

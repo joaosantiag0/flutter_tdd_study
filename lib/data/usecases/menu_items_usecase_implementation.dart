@@ -1,3 +1,5 @@
+import 'package:dev_tools/data/models/models.dart';
+
 import '../../domain/helpers/helpers.dart';
 import '../../domain/entities/menu_item_entity.dart';
 import '../../domain/usecases/usecases.dart';
@@ -13,10 +15,13 @@ class MenuItemsUsecaseImplementation implements MenuItemsUsecase {
   @override
   Future<List<MenuItemEntity>> getListMenuItems() async {
     try {
-      await httpClient.request(url: this.url, method: 'GET');
+      final httpClientResponse =
+          await httpClient.request(url: this.url, method: 'GET');
+      return GitContentModel.fromJsonArray(httpClientResponse)
+          .map((e) => e.toEntity())
+          .toList();
     } on HttpError {
       throw DomainError.unexpectedError;
     }
-    return [];
   }
 }
