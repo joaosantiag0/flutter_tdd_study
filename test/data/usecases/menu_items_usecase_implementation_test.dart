@@ -25,12 +25,10 @@ void main() {
     url = faker.internet.httpsUrl();
     httpClient = MockHttpClientImplementation();
     usecase = MenuItemsUsecaseImplementation(httpClient: httpClient, url: url);
+    mockSuccessfulResponse(httpClient);
   });
 
   test("Should call httpclient with correct values", () async {
-    mockHttpClientRequestWhen(httpClient)
-        .thenAnswer((_) async => {"test": "a"});
-
     await usecase.getListMenuItems();
 
     verify(() => httpClient.request(url: url, method: "GET")).called(1);
@@ -54,10 +52,6 @@ void main() {
 
   test("Should return a list of MenuItemsUsecase if request is successful",
       () async {
-    final test = jsonDecode(ApiContentResponseMock.listContentJsonResponseMock);
-    mockHttpClientRequestWhen(httpClient).thenAnswer((_) async =>
-        jsonDecode(ApiContentResponseMock.listContentJsonResponseMock));
-
     final result = await usecase.getListMenuItems();
 
     expect(result, ApiContentResponseMock.responseConvertedToEntityMock());
@@ -67,6 +61,11 @@ void main() {
 When<Future<dynamic>> mockHttpClientRequestWhen(HttpClient httpClient) {
   return when(() =>
       httpClient.request(url: any(named: "url"), method: any(named: "method")));
+}
+
+void mockSuccessfulResponse(HttpClient httpClient) {
+  mockHttpClientRequestWhen(httpClient).thenAnswer((_) async =>
+      jsonDecode(ApiContentResponseMock.listContentJsonResponseMock));
 }
 
 class MockHttpClientImplementation extends Mock implements HttpClient {}
