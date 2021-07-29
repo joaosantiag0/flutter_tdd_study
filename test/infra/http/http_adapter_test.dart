@@ -30,6 +30,14 @@ void main() {
 
     verify(() => client.get(Uri.parse(url))).called(1);
   });
+
+  test("Should throws NotFoundHttpError if code 404", () async {
+    when(() => client.get(Uri.parse(url)))
+        .thenAnswer((_) async => Response("", 404));
+
+    final result = httpClient.request(url: url, method: "GET");
+    expect(() => result, throwsA(HttpError.notFound));
+  });
 }
 
 class ClientMock extends Mock implements Client {}
@@ -40,10 +48,28 @@ class HttpClientImplementation implements HttpClient {
   HttpClientImplementation(this.client);
 
   @override
-  Future<dynamic> request(
-      {required String url, required String method, Map? body, Map? headers}) {
+  Future<Map> request(
+      {required String url,
+      required String method,
+      Map? body,
+      Map? headers}) async {
     final headersEncoded =
         headers == null ? null : headers as Map<String, String>;
-    return client.get(Uri.parse(url), headers: headersEncoded);
+
+    final response = await client.get(Uri.parse(url), headers: headersEncoded);
+    return _hanlderResponse(response);
+  }
+
+  Map _hanlderResponse(Response response) {
+    switch (response.statusCode) {
+      case 200:
+        return jsonDecode(response.body);
+      case 404:
+        throw HttpError.notFound;
+      case 403:
+        throw HttpError.forbiden;
+      default:
+        throw HttpError.serverError;
+    }
   }
 }
