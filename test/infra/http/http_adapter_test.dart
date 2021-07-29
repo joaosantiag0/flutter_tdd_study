@@ -38,6 +38,14 @@ void main() {
     final result = httpClient.request(url: url, method: "GET");
     expect(() => result, throwsA(HttpError.notFound));
   });
+
+  test("Should throws NotFoundHttpError if code 403", () async {
+    when(() => client.get(Uri.parse(url)))
+        .thenAnswer((_) async => Response("", 403));
+
+    final result = httpClient.request(url: url, method: "GET");
+    expect(() => result, throwsA(HttpError.forbiden));
+  });
 }
 
 class ClientMock extends Mock implements Client {}
