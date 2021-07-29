@@ -13,7 +13,7 @@ import 'package:dev_tools/data/usecases/usecases.dart';
 import '../../mocks/api_content_response_mock.dart';
 
 void main() {
-  late MenuItemsUsecase usecase;
+  late RepoItemsUsecase usecase;
   late HttpClient httpClient;
 
   late String url;
@@ -21,12 +21,12 @@ void main() {
   setUp(() {
     url = faker.internet.httpsUrl();
     httpClient = MockHttpClient();
-    usecase = MenuItemsUsecaseImplementation(httpClient: httpClient, url: url);
+    usecase = RepoItemsUsecaseImplementation(httpClient: httpClient, url: url);
     mockSuccessfulResponse(httpClient);
   });
 
   test("Should call httpclient with correct values", () async {
-    await usecase.getListMenuItems();
+    await usecase.getListRepoItems();
 
     verify(() => httpClient.request(url: url, method: "GET")).called(1);
   });
@@ -34,7 +34,7 @@ void main() {
   test("Should throw UnexpectedError if HttpClient returns 404", () async {
     mockHttpClientRequestWhen(httpClient).thenThrow(HttpError.notFound);
 
-    final future = usecase.getListMenuItems();
+    final future = usecase.getListRepoItems();
 
     expect(future, throwsA(DomainError.unexpectedError));
   });
@@ -42,14 +42,14 @@ void main() {
   test("Should throw UnexpectedError if HttpClient returns 403", () async {
     mockHttpClientRequestWhen(httpClient).thenThrow(HttpError.forbiden);
 
-    final future = usecase.getListMenuItems();
+    final future = usecase.getListRepoItems();
 
     expect(future, throwsA(DomainError.unexpectedError));
   });
 
-  test("Should return a list of MenuItemsUsecase if request is successful",
+  test("Should return a list of RepoItemsUsecase if request is successful",
       () async {
-    final result = await usecase.getListMenuItems();
+    final result = await usecase.getListRepoItems();
 
     expect(result, ApiContentResponseMock.responseConvertedToEntityMock());
   });

@@ -2,14 +2,14 @@ import 'package:equatable/equatable.dart';
 
 import '/domain/entities/entities.dart';
 
-abstract class MenuItemsUsecase {
-  Future<List<MenuItemEntity>> getListMenuItems();
+abstract class RepoItemsUsecase {
+  Future<List<RepoItemEntity>> getListRepoItems();
 }
 
-class MenuItemsParams extends Equatable {
+class RepoItemsParams extends Equatable {
   String? id;
 
-  MenuItemsParams({this.id});
+  RepoItemsParams({this.id});
 
   @override
   List<Object?> get props => [this.id];
