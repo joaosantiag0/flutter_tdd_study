@@ -46,6 +46,14 @@ void main() {
     final result = httpClient.request(url: url, method: "GET");
     expect(() => result, throwsA(HttpError.forbiden));
   });
+
+  test("Should throws ServerErrorHttpError if code 500", () async {
+    when(() => client.get(Uri.parse(url)))
+        .thenAnswer((_) async => Response("", 500));
+
+    final result = httpClient.request(url: url, method: "GET");
+    expect(() => result, throwsA(HttpError.serverError));
+  });
 }
 
 class ClientMock extends Mock implements Client {}
@@ -64,7 +72,13 @@ class HttpClientImplementation implements HttpClient {
     final headersEncoded =
         headers == null ? null : headers as Map<String, String>;
 
-    final response = await client.get(Uri.parse(url), headers: headersEncoded);
+    var response = Response("", 500);
+    switch (method.toLowerCase()) {
+      case "get":
+        response = await client.get(Uri.parse(url), headers: headersEncoded);
+        break;
+    }
+
     return _hanlderResponse(response);
   }
 
