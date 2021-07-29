@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
 class MenuItemEntity extends Equatable {
-  String name;
-  String? icon;
-  String id;
+  final String name;
+  final String? icon;
+  final String id;
 
   MenuItemEntity({
     required this.id,
@@ -12,6 +12,5 @@ class MenuItemEntity extends Equatable {
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [name, icon, id];
 }
