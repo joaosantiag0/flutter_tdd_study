@@ -35,10 +35,10 @@ class ApiContentResponseMock {
         }
     }]""";
 
-  static List<MenuItemEntity> responseConvertedToEntityMock() {
+  static List<RepoItemEntity> responseConvertedToEntityMock() {
     return [
-      MenuItemEntity(id: ".gitignore", name: ".gitignore"),
-      MenuItemEntity(id: "CHANGELOG.md", name: "CHANGELOG.md")
+      RepoItemEntity(id: ".gitignore", name: ".gitignore"),
+      RepoItemEntity(id: "CHANGELOG.md", name: "CHANGELOG.md")
     ];
   }
 }

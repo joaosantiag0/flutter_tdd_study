@@ -29,5 +29,5 @@ class GitContentModel extends Equatable {
         .toList();
   }
 
-  MenuItemEntity toEntity() => MenuItemEntity(id: this.path, name: this.name);
+  RepoItemEntity toEntity() => RepoItemEntity(id: this.path, name: this.name);
 }

@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class MenuItemEntity extends Equatable {
+class RepoItemEntity extends Equatable {
   final String name;
   final String? icon;
   final String id;
 
-  MenuItemEntity({
+  RepoItemEntity({
     required this.id,
     required this.name,
     this.icon,
